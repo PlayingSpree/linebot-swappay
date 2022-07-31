@@ -31,7 +31,7 @@ app.post("/webhook", function (req, res) {
             console.log(`Money changed to ${money}`)
         }
 
-        console.log(req.body.source.userId)
+        console.log(req.body.source)
 
         // Message data, must be stringified
         const dataString = JSON.stringify({
