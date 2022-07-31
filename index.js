@@ -13,14 +13,25 @@ app.get("/", (req, res) => {
     res.sendStatus(200)
 })
 
+let money = 0
+
 app.post("/webhook", function (req, res) {
     res.send("HTTP POST request sent to the webhook URL!")
     // If the user sends a message to your bot, send a reply message
     if (req.body.events[0].type === "message" && req.body.events[0].message.type === "text") {
         // Read message
-        const message = req.body.events[0].message.text
+        const amount = parseFloat(req.body.events[0].message.text)
 
-        console.log(req.body)
+        let message
+        if (typeof amount === NaN) {
+            message = "ไม่ใช่ตัวเลข"
+        } else {
+            money += amount
+            message = money.toFixed(2)
+            console.log(`Money changed to ${money}`)
+        }
+
+        console.log(req.body.source.userId)
 
         // Message data, must be stringified
         const dataString = JSON.stringify({
@@ -28,7 +39,7 @@ app.post("/webhook", function (req, res) {
             messages: [
                 {
                     "type": "text",
-                    "text": "EZ"
+                    "text": message
                 }
             ]
         })
