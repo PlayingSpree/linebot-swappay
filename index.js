@@ -20,7 +20,7 @@ app.post("/webhook", function (req, res) {
         // Read message
         const message = req.body.events[0].message.text
 
-        console.log(req.body.events[0].message)
+        console.log(req.body)
 
         // Message data, must be stringified
         const dataString = JSON.stringify({
