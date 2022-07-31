@@ -21,12 +21,12 @@ app.post("/webhook", function (req, res) {
     if (req.body.events[0].type === "message" && req.body.events[0].message.type === "text") {
         // Read message
         const amount = parseFloat(req.body.events[0].message.text)
-        console.log("Source userId: " + JSON.stringify(req.body.events[0].source))
+        console.log("Source: " + JSON.stringify(req.body.events[0].source))
         console.log("Text: " + req.body.events[0].message.text)
         console.log("amount: " + amount)
 
         let message
-        if (amount === NaN) {
+        if (Number.isNaN(amount)) {
             message = "ไม่ใช่ตัวเลข"
         } else {
             money += amount
