@@ -21,17 +21,17 @@ app.post("/webhook", function (req, res) {
     if (req.body.events[0].type === "message" && req.body.events[0].message.type === "text") {
         // Read message
         const amount = parseFloat(req.body.events[0].message.text)
-        console.log("Source userId: " + req.body.events[0].source.userID)
+        console.log("Source userId: " + req.body.events[0].source)
         console.log("Text: " + req.body.events[0].message.text)
         console.log("amount: " + amount)
 
         let message
-        if (typeof amount === NaN) {
-            message = "ไม่ใช่ตัวเลข"
-        } else {
+        if (typeof amount === "number") {
             money += amount
             message = money.toFixed(2)
             console.log(`Money changed to ${money}`)
+        } else {
+            message = "ไม่ใช่ตัวเลข"
         }
 
         // Message data, must be stringified
