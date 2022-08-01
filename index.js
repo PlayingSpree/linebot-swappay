@@ -1,6 +1,6 @@
 const https = require("https")
 const express = require("express")
-const {readAmount,setAmount} = require("./db")
+const { readAmount, setAmount } = require("./db")
 const app = express()
 const PORT = process.env.PORT || 3000
 const TOKEN = process.env.LINE_ACCESS_TOKEN
@@ -27,12 +27,12 @@ app.post("/webhook", function (req, res) {
         if (Number.isNaN(amount)) {
             return
         } else {
-            sendMessage(amount)
+            sendMessage(req, res, amount)
         }
     }
 })
 
-async function sendMessage(amount) {
+async function sendMessage(req, res, amount) {
     let money = await readAmount()
     money += amount
     setAmount(money)
