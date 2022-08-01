@@ -1,5 +1,6 @@
 const https = require("https")
 const express = require("express")
+const {readAmount,setAmount} = require("./db")
 const app = express()
 const PORT = process.env.PORT || 3000
 const TOKEN = process.env.LINE_ACCESS_TOKEN
@@ -13,8 +14,6 @@ app.get("/", (req, res) => {
     res.sendStatus(200)
 })
 
-let money = 0
-
 app.post("/webhook", function (req, res) {
     res.send("HTTP POST request sent to the webhook URL!")
     // If the user sends a message to your bot, send a reply message
@@ -25,59 +24,59 @@ app.post("/webhook", function (req, res) {
         console.log("Text: " + req.body.events[0].message.text)
         console.log("amount: " + amount)
 
-        let message
         if (Number.isNaN(amount)) {
-            message = "ไม่ใช่ตัวเลข"
+            return
         } else {
-            money += amount
-            message = money.toFixed(2)
-            console.log(`Money changed to ${money}`)
+            sendMessage()
         }
-
-        // Message data, must be stringified
-        const dataString = JSON.stringify({
-            replyToken: req.body.events[0].replyToken,
-            messages: [
-                {
-                    "type": "text",
-                    "text": message
-                }
-            ]
-        })
-
-        // Request header
-        const headers = {
-            "Content-Type": "application/json",
-            "Authorization": "Bearer " + TOKEN
-        }
-
-        // Options to pass into the request
-        const webhookOptions = {
-            "hostname": "api.line.me",
-            "path": "/v2/bot/message/reply",
-            "method": "POST",
-            "headers": headers,
-            "body": dataString
-        }
-
-        // Define request
-        const request = https.request(webhookOptions, (res) => {
-            res.on("data", (d) => {
-                process.stdout.write(d)
-            })
-        })
-
-        // Handle error
-        request.on("error", (err) => {
-            console.error(err)
-        })
-
-        // Send data
-        request.write(dataString)
-        request.end()
     }
 })
 
-app.listen(PORT, () => {
-    console.log(`Example app listening at http://localhost:${PORT}`)
-})
+async function sendMessage() {
+    let money = await readAmount()
+    money += amount
+    setAmount(money)
+    message = money.toFixed(2)
+
+    // Message data, must be stringified
+    const dataString = JSON.stringify({
+        replyToken: req.body.events[0].replyToken,
+        messages: [
+            {
+                "type": "text",
+                "text": message
+            }
+        ]
+    })
+
+    // Request header
+    const headers = {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + TOKEN
+    }
+
+    // Options to pass into the request
+    const webhookOptions = {
+        "hostname": "api.line.me",
+        "path": "/v2/bot/message/reply",
+        "method": "POST",
+        "headers": headers,
+        "body": dataString
+    }
+
+    // Define request
+    const request = https.request(webhookOptions, (res) => {
+        res.on("data", (d) => {
+            process.stdout.write(d)
+        })
+    })
+
+    // Handle error
+    request.on("error", (err) => {
+        console.error(err)
+    })
+
+    // Send data
+    request.write(dataString)
+    request.end()
+}
