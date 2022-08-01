@@ -27,12 +27,12 @@ app.post("/webhook", function (req, res) {
         if (Number.isNaN(amount)) {
             return
         } else {
-            sendMessage()
+            sendMessage(amount)
         }
     }
 })
 
-async function sendMessage() {
+async function sendMessage(amount) {
     let money = await readAmount()
     money += amount
     setAmount(money)
