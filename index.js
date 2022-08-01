@@ -80,3 +80,7 @@ async function sendMessage() {
     request.write(dataString)
     request.end()
 }
+
+app.listen(PORT, () => {
+    console.log(`Example app listening at http://localhost:${PORT}`)
+})
