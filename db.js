@@ -13,7 +13,7 @@ async function readAmount() {
     try {
         let res = await client.query('SELECT amount FROM amount WHERE id = 1')
         console.log("Read amount from db: " + res.rows[0].amount);
-        res.rows[0].amount
+        return res.rows[0].amount
     }
     catch (err) {
         console.log(err)
