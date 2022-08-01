@@ -23,7 +23,7 @@ async function readAmount() {
 async function setAmount(amount) {
     try {
         let res = await client.query(`UPDATE amount SET amount = ${amount} WHERE id = 1`)
-        console.log(JSON.stringify(res));
+        console.log("Db update row count: " + res.rowCount);
     }
     catch (err) {
         console.log(err)
