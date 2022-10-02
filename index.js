@@ -19,7 +19,8 @@ app.post("/webhook", function (req, res) {
     // If the user sends a message to your bot, send a reply message
     if (req.body.events[0].type === "message" && req.body.events[0].message.type === "text") {
         // Read message
-        const amount = parseFloat(req.body.events[0].message.text)
+        const input = req.body.events[0].message.text
+        const amount = eval(input.replace(/[^0-9\+\-\*\/]/g, ''));
         console.log("Source: " + JSON.stringify(req.body.events[0].source))
         console.log("Text: " + req.body.events[0].message.text)
         console.log("amount: " + amount)

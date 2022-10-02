@@ -1,19 +1,14 @@
-const { Client } = require('pg');
-
-const client = new Client({
-    connectionString: process.env.DATABASE_URL,
-    ssl: {
-        rejectUnauthorized: false
-    }
-});
-
-client.connect();
+const Enmap = require("enmap");
+const map = new Enmap({ name: "amount" });
 
 async function readAmount() {
     try {
-        let res = await client.query('SELECT amount FROM amount WHERE id = 1')
-        console.log("Read amount from db: " + res.rows[0].amount);
-        return res.rows[0].amount
+        let amount = map.get("amount")
+        if (amount == undefined) {
+            console.log(`Data is ${amount}. Default to 0`);
+        }
+        console.log("Read amount from db: " + amount);
+        return amount
     }
     catch (err) {
         console.log(err)
@@ -22,8 +17,8 @@ async function readAmount() {
 
 async function setAmount(amount) {
     try {
-        let res = await client.query(`UPDATE amount SET amount = ${amount} WHERE id = 1`)
-        console.log("Db update row count: " + res.rowCount);
+        map.set("amount", amount)
+        console.log("Db amount update: " + amount);
     }
     catch (err) {
         console.log(err)
