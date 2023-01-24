@@ -22,7 +22,7 @@ app.post("/webhook", function (req, res) {
     if (req.body.events[0].type === "message" && req.body.events[0].message.type === "text") {
         // Read message
         const input = req.body.events[0].message.text
-        const amount = eval(input.replace(/[^0-9\+\-\*\/]/g, ''));
+        const amount = eval(input.replace(/[^0-9\+\-\*\/\.]/g, ''));
         console.log("Source: " + JSON.stringify(req.body.events[0].source))
         console.log("Text: " + req.body.events[0].message.text)
         console.log("amount: " + amount)
