@@ -27,7 +27,7 @@ app.post("/webhook", function (req, res) {
         console.log("Text: " + req.body.events[0].message.text)
         console.log("amount: " + amount)
 
-        if (Number.isNaN(amount)) {
+        if (Number.isNaN(amount) || amount == undefined) {
             return
         } else {
             sendMessage(req, res, amount)

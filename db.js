@@ -4,8 +4,9 @@ const map = new Enmap({ name: "amount" });
 async function readAmount() {
     try {
         let amount = map.get("amount")
-        if (amount == undefined) {
+        if (Number.isNaN(amount) || amount == undefined) {
             console.log(`Data is ${amount}. Default to 0`);
+            amount = 0
         }
         console.log("Read amount from db: " + amount);
         return amount
