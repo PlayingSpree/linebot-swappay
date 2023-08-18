@@ -39,7 +39,7 @@ async function sendMessage(req, res, amount) {
     let money = await readAmount()
     money += amount
     setAmount(money)
-    message = money.toFixed(2)
+    message = amount.toFixed(2) + "\n= " + money.toFixed(2)
 
     // Message data, must be stringified
     const dataString = JSON.stringify({
