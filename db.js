@@ -1,32 +1,41 @@
-const Enmap = require("enmap");
+import Enmap from "enmap";
 const map = new Enmap({ name: "amount" });
 
-async function readAmount() {
+/**
+ * Reads the total balance in cents.
+ * @returns {Promise<number>}
+ */
+export async function readAmount() {
     try {
         let amount = map.get("amount")
-        if (Number.isNaN(amount) || amount == undefined) {
+        if (!Number.isSafeInteger(amount)) {
             console.log(`Data is ${amount}. Default to 0`);
             amount = 0
+            map.set("amount", 0)
         }
-        console.log("Read amount from db: " + amount);
+        console.log("Read amount from db (cents): " + amount);
         return amount
     }
     catch (err) {
-        console.log(err)
+        console.error("Error reading amount:", err)
+        return 0
     }
 }
 
-async function setAmount(amount) {
+/**
+ * Atomically adds a delta (in cents) to the total balance.
+ * @param {number} deltaInCents 
+ * @returns {Promise<number>} The new balance in cents.
+ */
+export async function addAmount(deltaInCents) {
     try {
-        map.set("amount", amount)
-        console.log("Db amount update: " + amount);
+        // Enmap.inc returns the new value
+        const newTotal = map.inc("amount", deltaInCents)
+        console.log("Db amount incremented by: " + deltaInCents + ". New total (cents): " + newTotal);
+        return newTotal
     }
     catch (err) {
-        console.log(err)
+        console.error("Error updating amount:", err)
+        throw err
     }
-}
-
-module.exports = {
-    readAmount,
-    setAmount
 }

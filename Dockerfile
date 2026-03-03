@@ -1,10 +1,8 @@
 # syntax = docker/dockerfile:1
 
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=16.6.1
+# Update to a supported Node version (Node 20 uses Debian Bookworm)
+ARG NODE_VERSION=20.11.1
 FROM node:${NODE_VERSION}-slim as base
-
-LABEL fly_launch_runtime="Node.js"
 
 # Node.js app lives here
 WORKDIR /app
@@ -18,18 +16,14 @@ FROM base as build
 
 # Install packages needed to build node modules
 RUN apt-get update -qq && \
-    apt-get install -y python pkg-config build-essential 
+    apt-get install -y python3 pkg-config build-essential 
 
 # Install node modules
-COPY --link package-lock.json package.json ./
-RUN npm ci --include=dev
+COPY --link package.json ./
+RUN npm install
 
 # Copy application code
 COPY --link . .
-
-# Remove development dependencies
-RUN npm prune --omit=dev
-
 
 # Final stage for app image
 FROM base

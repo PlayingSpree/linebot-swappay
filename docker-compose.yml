@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  linebot-swappay:
+    build: .
+    container_name: linebot-swappay
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - LINE_ACCESS_TOKEN=${LINE_ACCESS_TOKEN}
+      - PORT=3000
+    volumes:
+      # Map this to your Unraid appdata path
+      # Typically: /mnt/user/appdata/linebot-swappay/data
+      - ./data:/app/data
