@@ -1,6 +1,7 @@
-const https = require("https")
-const express = require("express")
-const { readAmount, setAmount } = require("./db")
+import https from "https"
+import express from "express"
+import { readAmount, setAmount } from "./db.js"
+
 const app = express()
 const PORT = process.env.PORT || 3000
 const TOKEN = process.env.LINE_ACCESS_TOKEN
@@ -19,15 +20,22 @@ app.post("/webhook", function (req, res) {
     console.log("Webhook GET:")
     console.log(JSON.stringify(req.body))
     // If the user sends a message to your bot, send a reply message
-    if (req.body.events[0].type === "message" && req.body.events[0].message.type === "text") {
+    if (req.body.events && req.body.events.length > 0 && req.body.events[0].type === "message" && req.body.events[0].message.type === "text") {
         // Read message
         const input = req.body.events[0].message.text
-        const amount = eval(input.replace(/[^0-9\+\-\*\/\.]/g, ''));
+        const sanitizedInput = input.replace(/[^0-9\+\-\*\/\.]/g, '');
+        let amount;
+        try {
+            amount = eval(sanitizedInput);
+        } catch (e) {
+            console.error("Eval error:", e);
+        }
+
         console.log("Source: " + JSON.stringify(req.body.events[0].source))
         console.log("Text: " + req.body.events[0].message.text)
         console.log("amount: " + amount)
 
-        if (Number.isNaN(amount) || amount == undefined) {
+        if (Number.isNaN(amount) || amount === undefined) {
             return
         } else {
             sendMessage(req, res, amount)
@@ -39,7 +47,7 @@ async function sendMessage(req, res, amount) {
     let money = await readAmount()
     money += amount
     setAmount(money)
-    message = amount.toFixed(2) + "\n= " + money.toFixed(2)
+    const message = amount.toFixed(2) + "\n= " + money.toFixed(2)
 
     // Message data, must be stringified
     const dataString = JSON.stringify({
@@ -63,8 +71,7 @@ async function sendMessage(req, res, amount) {
         "hostname": "api.line.me",
         "path": "/v2/bot/message/reply",
         "method": "POST",
-        "headers": headers,
-        "body": dataString
+        "headers": headers
     }
 
     // Define request

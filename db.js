@@ -1,7 +1,7 @@
-const Enmap = require("enmap");
+import Enmap from "enmap";
 const map = new Enmap({ name: "amount" });
 
-async function readAmount() {
+export async function readAmount() {
     try {
         let amount = map.get("amount")
         if (Number.isNaN(amount) || amount == undefined) {
@@ -16,7 +16,7 @@ async function readAmount() {
     }
 }
 
-async function setAmount(amount) {
+export async function setAmount(amount) {
     try {
         map.set("amount", amount)
         console.log("Db amount update: " + amount);
@@ -24,9 +24,4 @@ async function setAmount(amount) {
     catch (err) {
         console.log(err)
     }
-}
-
-module.exports = {
-    readAmount,
-    setAmount
 }
