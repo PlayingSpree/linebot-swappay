@@ -22,14 +22,10 @@ RUN apt-get update -qq && \
 
 # Install node modules
 COPY --link package.json ./
-RUN npm install --include=dev
+RUN npm install
 
 # Copy application code
 COPY --link . .
-
-# Remove development dependencies
-RUN npm prune --omit=dev
-
 
 # Final stage for app image
 FROM base
