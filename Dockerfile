@@ -1,7 +1,7 @@
 # syntax = docker/dockerfile:1
 
-# Adjust NODE_VERSION as desired
-ARG NODE_VERSION=16.6.1
+# Update to a supported Node version (Node 20 uses Debian Bookworm)
+ARG NODE_VERSION=20.11.1
 FROM node:${NODE_VERSION}-slim as base
 
 LABEL fly_launch_runtime="Node.js"
